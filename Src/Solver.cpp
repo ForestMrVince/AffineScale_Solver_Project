@@ -129,12 +129,17 @@ static void x_init()
 /*问题录入函数*/
 
 /*大M段法求解函数*/
-bool BigM_Method_main()
+//主函数
+static bool BigM_Method_main()
 {
 	return true;
 }
 /*大M法求解函数*/
 
 /*原仿射尺度求解*/
-
+//主函数
+static bool AffineScale_Method_main()
+{
+	return true;
+}
 /*原仿射尺度求解*/
