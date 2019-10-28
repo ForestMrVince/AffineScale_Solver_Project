@@ -14,11 +14,11 @@ static void x_init();			//初始化自变量列向量x
 /*问题录入函数*/
 
 /*大M段法求解函数*/
-bool BigM_Method_main();		//大M法主函数
+static bool BigM_Method_main();	//大M法主函数
 /*大M法求解函数*/
 
 /*原仿射尺度求解*/
-
+static bool AffineScale_Method_main();	//原仿射尺度法主函数
 /*原仿射尺度求解*/
 
 //TEST
