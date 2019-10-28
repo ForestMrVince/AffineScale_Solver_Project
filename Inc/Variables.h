@@ -1,65 +1,29 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Project.h"
 
-/*È«¾Ö±äÁ¿ÉùÃ÷*/
+/*å…¨å±€å˜é‡å£°æ˜*/
 //extern Matrix_typedef Matrix;
 
-/*±ê×¼ĞÍ±äÁ¿*/
-extern Matrix_typedef A;//¶şÎ¬¾ØÕó£¬m ¡Á n
-extern Matrix_typedef c;//ÁĞÏòÁ¿£¨nÎ¬¶È£©
-extern Matrix_typedef b;//ÁĞÏòÁ¿£¨mÎ¬¶È£©
-extern Matrix_typedef x;//ÁĞÏòÁ¿£¨Î´ÖªÊı£¬²»ĞèÒªÊäÈë£¬??Î¬¶È£©
-extern size_t m;//Î¬¶Èm£¬²»ĞèÒªÊäÈë
-extern size_t n;//Î¬¶Èn£¬²»ĞèÒªÊäÈë
+/*æ ‡å‡†å‹å˜é‡*/
+extern Matrix_typedef A;//äºŒç»´çŸ©é˜µï¼Œm Ã— n
+extern Matrix_typedef c;//åˆ—å‘é‡ï¼ˆnç»´åº¦ï¼‰
+extern Matrix_typedef b;//åˆ—å‘é‡ï¼ˆmç»´åº¦ï¼‰
+extern Matrix_typedef x;//åˆ—å‘é‡ï¼ˆæœªçŸ¥æ•°ï¼Œä¸éœ€è¦è¾“å…¥ï¼Œnç»´åº¦ï¼‰
+extern size_t m;//ç»´åº¦mï¼Œä¸éœ€è¦è¾“å…¥
+extern size_t n;//ç»´åº¦nï¼Œä¸éœ€è¦è¾“å…¥
+/*æ ‡å‡†å‹å˜é‡*/
 
-/*Çó½â±ê×¼ĞÍ²ğ·Ö±äÁ¿*/
-//´ıÇó½âÎÊÌâµÄ±äÁ¿
-extern Matrix_typedef A_s;//¶şÎ¬¾ØÕó£¬m_s ¡Á n_s
-extern Matrix_typedef c_s;//ÁĞÏòÁ¿£¨n_sÎ¬¶È£©
-extern Matrix_typedef b_s;//ÁĞÏòÁ¿£¨m_sÎ¬¶È£©
-extern Matrix_typedef x_s;//ÁĞÏòÁ¿£¨³õÊ¼µã£¬²»ĞèÒªÊäÈë£¬n_sÎ¬¶È£©
-extern size_t m_s;//Î¬¶Èm_s£¬²»ĞèÒªÊäÈë
-extern size_t n_s;//Î¬¶Èn_s£¬²»ĞèÒªÊäÈë
-//A²ğ·Ö³ÉµÄ
-extern Matrix_typedef B;//»ù£¨m ¡Á mµÄ·½Õó£©
-extern Matrix_typedef N;//·Ç»ù£¨m ¡Á (n - m) Î¬µÄ¾ØÕó£©
-//c²ğ·Ö³ÉµÄ
-extern Matrix_typedef cB;//»ùc£¨³¤¶ÈÎª m µÄÁãÁĞÏòÁ¿£©
-extern Matrix_typedef cN;//·Ç»ùc£¨³¤¶ÈÎª n - m µÄÁãÁĞÏòÁ¿£©
-//x²ğ·Ö³ÉµÄ
-extern Matrix_typedef xB;//»ù±äÁ¿£¨³¤¶ÈÎª m µÄÁãÁĞÏòÁ¿£©
-extern Matrix_typedef xN;//·Ç»ù±äÁ¿£¨³¤¶ÈÎª n - m µÄÁãÁĞÏòÁ¿£©
+/*å¤§Mæ³•æ±‚è§£ç›¸å…³å˜é‡*/
 
-/*Çó½â¹ı³Ì±äÁ¿*/
-/*±äÁ¿ÏÂ±ê¼¯ºÏ*/
-extern Matrix_typedef IB;//»ù±äÁ¿µÄÏÂ±ê¼¯ºÏ		¡ù·Ç³£ÖØÒª£¡£¡£¡£¡
-extern Matrix_typedef IN;//·Ç»ù±äÁ¿µÄÏÂ±ê¼¯ºÏ		¡ù·Ç³£ÖØÒª£¡£¡£¡£¡
-/*µü´úÔËËãÏà¹Ø±äÁ¿*/
-extern Matrix_typedef r;//¼ÈÔ¼·ÑÓÃÏòÁ¿£¨ËùÓĞµÄ±äÁ¿¡İ0£¬Ôò½á¹û×îÓÅ¡£µÈ¼ÛÓÚrN¡İ0.£©
-extern Matrix_typedef rB;//»ù£¬¼ÈÔ¼·ÑÓÃÏòÁ¿£¨³¤¶ÈÎª m µÄÁãÁĞÏòÁ¿£©
-extern Matrix_typedef rN;//·Ç»ù£¬¼ÈÔ¼·ÑÓÃÏòÁ¿£¨³¤¶ÈÎª n - m µÄÁĞÏòÁ¿£©
-/*×îÓÅĞÔÅĞ±ğ±äÁ¿*/
-extern Matrix_typedef w_T;//µ¥´¿ĞÎ³Ë×ÓwµÄ×ªÖÃ
-extern size_t q;//µ±Ç°ËùÉ¨Ãèµ½µÄ·Ç»ù±äÁ¿µÄ½Ç±ê£¬»òÊÇÈë»ù±äÁ¿½Ç±ê
-extern size_t jp;//µ±Ç°ËùÉ¨Ãèµ½µÄ»ù±äÁ¿µÄ½Ç±ê£¬»òÊÇ³ö»ù±äÁ¿½Ç±ê
-extern double xq;//Ä³Ò»¸ö·Ç»ù±äÁ¿£¨ËùÓĞµÄxq¡İ0£¬Ôò½á¹û×îÓÅ¡£µÈ¼ÛÓÚr¡İ0»òrN¡İ0.£©
-extern double rq;//xq¶ÔÓ¦µÄ£¬r»òÕßËµÊÇrNµÄ³ÉÔ±±äÁ¿
-extern double cq;//xq¶ÔÓ¦µÄ£¬c»òÕßËµÊÇcNµÄ³ÉÔ±±äÁ¿
-extern Matrix_typedef Nq;//xq¶ÔÓ¦µÄ£¬NÖĞµÄÁĞÏòÁ¿
-extern Matrix_typedef Aq;//xq¶ÔÓ¦µÄ£¬AÖĞµÄÁĞÏòÁ¿£¨ÓëNqÏàµÈ£¬ÒòÎªNÊÇ´ÓAÖĞ²ğ·Ö³öÀ´µÄ£©
-/*¸Ä½ø±äÁ¿*/
-//¸Ä½ø·½Ïò
-extern Matrix_typedef D;//dq¹¹³ÉµÄ¾ØÕó
-extern Matrix_typedef dq;//DqµÄxq¶ÔÓ¦µÄÁĞ£¬¸Ä½ø·½Ïò
-//²½³¤
-extern double lambda;//µü´ú²½³¤
+/*å¤§Mæ³•æ±‚è§£ç›¸å…³å˜é‡*/
 
-/*Á½½×¶Î·¨±äÁ¿*/
-extern Matrix_typedef xa;//ÈË¹¤±äÁ¿£¬ÁĞÏòÁ¿£¨Î´ÖªÊı£¬²»ĞèÒªÊäÈë£¬mÎ¬¶È£©£¬³õÊ¼»¯Îªb£¡£¡£¡£¡£¬µü´úÍê³Éºóxa±ØĞëÈ«Îª0£¬·ñÔòÔ­ÎÊÌâ²»¿ÉĞĞ¡£
-extern Matrix_typedef Aa;//Á½½×¶Î·¨ÖĞ£¬ÈË¹¤±äÁ¿Ëù¶ÔÓ¦µÄAµÄÁĞµÄ¾ØÕó£¬Êµ¼ÊÎªµ¥Î»ÕóIÎ¬¶ÈÎªm ¡Á m
-//extern Matrix_typedef x_2;//Á½½×¶Î·¨µÄ×Ü±äÁ¿ÁĞÏòÁ¿£¬ÊÇ½«xaÆ´ÔÚxºóÃæ£¬Î¬¶ÈÊÇn+mÎ¬¶È¡£³õÊ¼»¯ºó£¬Ç°ÃæµÄxÈ«Îª0£¬ºóÃæµÄxa=b
-extern Matrix_typedef x_2;//Á½½×¶Î·¨µÄ×Ô±äÁ¿ÁĞÏòÁ¿£¬xaÆ´ÔÚÔ­ÎÊÌâxµÄ×îºóÃæ£¬Î¬¶ÈÎª n + m = n_s, m = m_s
-extern Matrix_typedef c_2;//Á½½×¶Î·¨µÚÒ»½×¶ÎµÄc£¬³õÊ¼»¯ÎªÖµÈ«Îª1µÄÁĞÏòÁ¿£¬Î¬¶ÈÎªm£¬´ËÊ±B=I£¬´ËÊ±µ¥Î»ÕóIÎ¬¶ÈÎªm ¡Á m
-extern Matrix_typedef A_2;//Á½½×¶Î·¨ÖĞ£¬ÈË¹¤±äÁ¿Ëù¶ÔÓ¦µÄAµÄÁĞµÄ¾ØÕó£¬Êµ¼ÊÎªµ¥Î»ÕóIÎ¬¶ÈÎªm ¡Á m£¬Õâ¸ö¾ØÕóÆ´½Óµ½Ô­ÎÊÌâAµÄºóÃæĞÎ³ÉµÄ¾ØÕó£¬Î¬¶ÈÎªm ¡Á (n + m)
-extern Matrix_typedef b_2;//Á½½×¶Î·¨ÖĞµÄÁĞÏòÁ¿£¨mÎ¬¶È£©
+/*æ±‚è§£åŸä»¿å°„å°ºåº¦æ±‚è§£ç›¸å…³å˜é‡*/
+
+/*æ±‚è§£åŸä»¿å°„å°ºåº¦æ±‚è§£ç›¸å…³å˜é‡*/
+
+/*æœ€ç»ˆè§£å˜é‡*/
+extern Matrix_typedef cr;//åˆ—å‘é‡ï¼ˆğ‘›ç»´åº¦ï¼‰
+extern Matrix_typedef xr;//åˆ—å‘é‡ï¼ˆæœªçŸ¥æ•°ï¼Œä¸éœ€è¦è¾“å…¥ï¼Œğ‘›ç»´åº¦ï¼‰
+/*æœ€ç»ˆè§£å˜é‡*/
+/*å…¨å±€å˜é‡å£°æ˜*/
