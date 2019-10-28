@@ -155,16 +155,16 @@ int main()
 	{
 		std::cout << "求解成功！！！" << std::endl;
 
-		Matrix_typedef c_s_x_s_Mult_Result;
-		if (!Project_MatrixMultiplication(Project_MatrixTransposition(c_s), x_s, &c_s_x_s_Mult_Result))//检验
+		Matrix_typedef cr_xr_Mult_Result;
+		if (!Project_MatrixMultiplication(Project_MatrixTransposition(cr), xr, &cr_xr_Mult_Result))//检验
 		{
 			std::cout << "相乘失败！！！" << std::endl;
 			return false;
 		}
 		std::cout << "最优解：" << std::endl;
-		Project_ShowAMatrix(&c_s_x_s_Mult_Result);
-		std::cout << "此时的x：" << std::endl;
-		Project_ShowAMatrix(&x_s);
+		Project_ShowAMatrix(&cr_xr_Mult_Result);
+		std::cout << "优解的x：" << std::endl;
+		Project_ShowAMatrix(&xr);
 		std::cout << std::endl;
 	}
 	else
