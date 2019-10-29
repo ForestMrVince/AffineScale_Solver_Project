@@ -34,6 +34,11 @@ extern Matrix_typedef d_yk;		//转移方向
 extern Matrix_typedef d_xk;		//转移方向
 extern double Alpha_k;			//步长
 extern Matrix_typedef e;		//元素全为1的列向量，维度与当前问题的列向量x相同
+//纯化函数相关变量
+extern size_t j;			//迭代次数
+extern Matrix_typedef p_j;	//纯化向量
+extern Matrix_typedef I1;	//集合1
+extern Matrix_typedef I2;	//集合2
 /*求解原仿射尺度求解相关变量*/
 
 /*对中力计算相关变量*/
