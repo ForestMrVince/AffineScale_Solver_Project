@@ -11,12 +11,12 @@ bool Project_solver_main()//主函数
 
 	if (!BigM_Method_main())//调用两阶段法求解
 	{
-		std::cout << "两阶段法求解失败！！！" << std::endl;
+		std::cout << "大M法求解失败！！！" << std::endl;
 		return false;
 	}
 	else
 	{
-		std::cout << "两阶段法求解成功！！！" << std::endl;
+		std::cout << "大M法求解成功！！！" << std::endl;
 		return true;
 	}
 }
@@ -138,8 +138,320 @@ static bool BigM_Method_main()
 
 /*原仿射尺度求解*/
 //主函数
-static bool AffineScale_Method_main()
+static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)
 {
+	if (!AffineScale_Method_Init(x_0))
+	{
+		std::cout << "原仿射尺度法初始化错误！！！！" << std::endl;
+		return false;
+	}
+
+	while (!AffineScale_Method_OptimalityTest(A_AS, c_AS, b_AS))
+	{
+		if (!AffineScale_Method_d_yk())
+		{
+			std::cout << "原仿射尺度法d_yk计算错误！！！！" << std::endl;
+			return false;
+		}
+
+		if (AffineScale_Method_d_yk_check())
+		{
+			std::cout << "原问题是无界的！！！！" << std::endl;
+			return false;
+		}
+
+		if (!AffineScale_Method_Alpha_k())
+		{
+			std::cout << "步长计算错误！！！！" << std::endl;
+			return false;
+		}
+
+		if (!AffineScale_Method_SetConfig())
+		{
+			std::cout << "设置刷新错误！！！！" << std::endl;
+			return false;
+		}
+	}
+
+	std::cout << "原仿射尺度求解成功！！！！" << std::endl;
+	return true;
+}
+
+//初始化函数
+static bool AffineScale_Method_Init(Matrix_typedef x_0)
+{
+	k = 0;
+	Epsilon = 0.01;
+	Alpha = 0.99;
+	x_k = x_0;
+
+	Matrix_Row X_k_row_temp(1, 1);
+	Matrix_typedef Matrix_temp(x_k.size(), X_k_row_temp);
+
+	e = Matrix_temp;
+
+	return true;
+}
+
+//迭代运算
+static bool AffineScale_Method_OptimalityTest(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS)
+{
+	AffineScale_Method_xk2Xk();
+
+	if (!AffineScale_Method_p_k(A_AS, c_AS))
+	{
+		std::cout << "最优性判断，p_k计算错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!AffineScale_Method_r_k(A_AS, c_AS))
+	{
+		std::cout << "最优性判断，r_k计算错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (AffineScale_Method_r_k_check() && AffineScale_Method_e_t_X_k_r_k_check())
+	{
+		std::cout << "循环至 k = " << k << "，当前解最优！！！！" << std::endl;
+
+		xr = x_k;
+		cr = c_AS;
+
+		return true;
+	}
+
+	std::cout << "循环至 k = " << k << "，当前解非最优！！！！" << std::endl;
+	std::cout << "继续循环！！！！" << std::endl;
+	return false;
+}
+
+static bool AffineScale_Method_SetConfig()
+{
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(X_k, d_yk, &Matrix_temp))
+	{
+		std::cout << "刷新设置，1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(Alpha_k, Matrix_temp);
+
+	if (!Project_MatrixPlusMatrix(x_k, Matrix_temp, &x_k))
+	{
+		std::cout << "刷新设置，2 错误！！！！" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+//辅助函数
+static void AffineScale_Method_xk2Xk()
+{
+	Matrix_Row X_k_row_temp(x_k.size(), 0);
+	Matrix_typedef Matrix_temp(x_k.size(), X_k_row_temp);
+
+	X_k = Matrix_temp;
+	for (size_t i = 0; i < x_k.size(); i++)
+	{
+		(X_k[i])[i] = (x_k[0])[i];
+	}
+}
+
+static bool AffineScale_Method_p_k(Matrix_typedef A_AS, Matrix_typedef c_AS)
+{
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(X_k, X_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，p_k 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(A_AS, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，p_k 2 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, Project_MatrixTransposition(A_AS), &Matrix_temp))
+	{
+		std::cout << "最优性判断，p_k 3 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixInversion(Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，p_k 4 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, A_AS, &Matrix_temp))
+	{
+		std::cout << "最优性判断，p_k 5 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, X_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，p_k 6 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, X_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，p_k 7 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, c, &p_k))
+	{
+		std::cout << "最优性判断，p_k 8 错误！！！！" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+static bool AffineScale_Method_r_k(Matrix_typedef A_AS, Matrix_typedef c_AS)
+{
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(Project_MatrixTransposition(A_AS), p_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，r_k 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(-1, Matrix_temp);
+
+	if (!Project_MatrixPlusMatrix(c_AS, Matrix_temp, &r_k))
+	{
+		std::cout << "最优性判断，r_k 2 错误！！！！" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+static bool AffineScale_Method_r_k_check()
+{
+	for (auto row_temp : r_k)
+	{
+		for (auto temp : row_temp)
+		{
+			if (temp < 0)
+			{
+				return false;
+			}
+		}
+	}
+
+	std::cout << "最优性判断，r_k 全大于等于零！！！！" << std::endl;
+	return true;
+}
+
+static bool AffineScale_Method_e_t_X_k_r_k_check()
+{
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(Project_MatrixTransposition(e), X_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，e_t、X_k、r_k的乘积 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, r_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，e_t、X_k、r_k的乘积 2 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (Matrix_temp.size() == 1)
+	{
+		if ((Matrix_temp.begin()->size()) == 1)
+		{
+			if ((Matrix_temp[0])[0] < Epsilon)
+			{
+				std::cout << "最优性判断，e_t、X_k、r_k的乘积小于Epsilon！！！！" << std::endl;
+				return true;
+			}
+		}
+		else
+		{
+			std::cout << "最优性判断，e_t、X_k、r_k的乘积维度错误！！！！" << std::endl;
+			return false;
+		}
+	}
+	else
+	{
+		std::cout << "最优性判断，e_t、X_k、r_k的乘积维度错误！！！！" << std::endl;
+		return false;
+	}
+
+	std::cout << "最优性判断，e_t、X_k、r_k的乘积大于Epsilon！！！！" << std::endl;
+	return false;
+}
+
+static bool AffineScale_Method_d_yk()
+{
+	Matrix_typedef Matrix_temp;
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(-1, X_k);
+
+	if (!Project_MatrixMultiplication(Matrix_temp, r_k, &d_yk))
+	{
+		std::cout << "最优性判断，d_yk 1 错误！！！！" << std::endl;
+		return false;
+	}
+	
+	return true;
+}
+
+static bool AffineScale_Method_d_yk_check()
+{
+	for (auto row_temp : d_yk)
+	{
+		for (auto temp : row_temp)
+		{
+			if (temp <= 0)
+			{
+				return false;
+			}
+		}
+	}
+
+	std::cout << "最优性判断，d_yk 全大于零！！！！" << std::endl;
+	return true;
+}
+
+static bool AffineScale_Method_Alpha_k()
+{
+	double Alpha_k_before = 0, Alpha_k_now = 0;
+	bool i = false;
+
+	for (auto row_temp : d_yk)
+	{
+		for (auto temp : row_temp)
+		{
+			Alpha_k_now = Alpha / (0 - temp);
+			if (!i)
+			{
+				Alpha_k_before = Alpha_k_now;
+				i = true;
+			}
+			else
+			{
+				if (Alpha_k_now > Alpha_k_before)
+				{
+					Alpha_k_before = Alpha_k_now;
+				}
+			}
+		}
+	}
+
+	Alpha_k = Alpha_k_before;
 	return true;
 }
 /*原仿射尺度求解*/
