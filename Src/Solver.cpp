@@ -140,6 +140,8 @@ static bool BigM_Method_main()
 //主函数
 static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)
 {
+	std::cout << "原仿射尺度求解开始..." << std::endl;
+	
 	if (!AffineScale_Method_Init(x_0))
 	{
 		std::cout << "原仿射尺度法初始化错误！！！！" << std::endl;
@@ -171,6 +173,12 @@ static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Ma
 			std::cout << "设置刷新错误！！！！" << std::endl;
 			return false;
 		}
+	}
+
+	if (!AffineScale_Method_Purification())
+	{
+		std::cout << "纯化错误！！！！" << std::endl;
+		return false;
 	}
 
 	std::cout << "原仿射尺度求解成功！！！！" << std::endl;
@@ -244,6 +252,36 @@ static bool AffineScale_Method_SetConfig()
 	}
 
 	return true;
+}
+
+//纯化函数
+static bool AffineScale_Method_Purification()
+{
+	if (!Purification_Init())
+	{
+		std::cout << "纯化初始化错误！！！！" << std::endl;
+	}
+
+	do
+	{
+		j = j + 1;
+		p_j = u(p_j);
+		//
+	} while ();
+}
+
+static bool Purification_Init()
+{
+	Epsilon = 0.01;
+	j = 0;
+	p_j = xr;
+
+	return true;
+}
+
+static Matrix_typedef u(Matrix_typedef p_j0)
+{
+	//
 }
 
 //辅助函数
