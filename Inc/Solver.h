@@ -30,6 +30,8 @@ static bool AffineScale_Method_d_yk();																					//计算d_yk
 static bool AffineScale_Method_d_yk_check();																			//检查d_yk是否都大于0
 static bool AffineScale_Method_Alpha_k();																				//计算步长
 static bool AffineScale_Method_SetConfig();																				//刷新设置
+static bool AffineScale_Method_Purification();																			//纯化函数
+static bool Purification_Init();																						//纯化函数初始化
 /*原仿射尺度求解*/
 
 //TEST
