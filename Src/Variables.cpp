@@ -31,11 +31,11 @@ Matrix_typedef r_k;		//x_kd对应的约费用向量
 Matrix_typedef d_yk;	//转移方向
 Matrix_typedef d_xk;	//转移方向
 double Alpha_k;			//步长
+Matrix_typedef e;		//元素全为1的列向量，维度与当前问题的列向量x相同
 /*求解原仿射尺度求解相关变量*/
 
 /*对中力计算相关变量*/
 double Mu;				//一个大于零的标量μ
-Matrix_typedef e;		//元素全为1的列向量，维度与当前问题的列向量x相同
 Matrix_typedef d_Muk;	//转移方向
 /*对中力计算相关变量*/
 
