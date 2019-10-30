@@ -37,6 +37,7 @@ size_t j;			//迭代次数
 Matrix_typedef p_j;	//纯化向量
 Matrix_typedef I1;	//集合1
 Matrix_typedef I2;	//集合2
+Matrix_typedef X_p;	//p_j对应的对角阵
 /*求解原仿射尺度求解相关变量*/
 
 /*对中力计算相关变量*/
