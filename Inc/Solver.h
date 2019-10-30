@@ -30,8 +30,11 @@ static bool AffineScale_Method_d_yk();																					//计算d_yk
 static bool AffineScale_Method_d_yk_check();																			//检查d_yk是否都大于0
 static bool AffineScale_Method_Alpha_k();																				//计算步长
 static bool AffineScale_Method_SetConfig();																				//刷新设置
-static bool AffineScale_Method_Purification();																			//纯化函数
+static bool AffineScale_Method_Purification(Matrix_typedef A_p);														//纯化函数
 static bool Purification_Init();																						//纯化函数初始化
+static bool u(Matrix_typedef p_j0, Matrix_typedef A_p, Matrix_typedef* p_j1);											//纯化函数中的u				※可能存在BUG
+static void p_j_2_X_p(Matrix_typedef p_j0);																				//p_j到X_p的转换
+static bool Generalized_Inverse_matrix(Matrix_typedef matrix_temp, Matrix_typedef* matrix_result);						//求广义逆矩阵				※可能存在BUG
 /*原仿射尺度求解*/
 
 //TEST
