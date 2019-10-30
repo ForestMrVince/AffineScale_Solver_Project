@@ -175,7 +175,7 @@ static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Ma
 		}
 	}
 
-	if (!AffineScale_Method_Purification())
+	if (!AffineScale_Method_Purification(A_AS))
 	{
 		std::cout << "´¿»¯´íÎó£¡£¡£¡£¡" << std::endl;
 		return false;
@@ -255,7 +255,7 @@ static bool AffineScale_Method_SetConfig()
 }
 
 //´¿»¯º¯Êý
-static bool AffineScale_Method_Purification()
+static bool AffineScale_Method_Purification(Matrix_typedef A_p)
 {
 	if (!Purification_Init())
 	{
@@ -265,9 +265,13 @@ static bool AffineScale_Method_Purification()
 	do
 	{
 		j = j + 1;
-		p_j = u(p_j);
-		//
-	} while ();
+		if (!u(p_j, A_p, &p_j))
+		{
+			std::cout << "Ñ­»·ÖÁ j = " << j << " £¬u¼ÆËã´íÎó£¡£¡£¡" << std::endl;
+			return false;
+		}
+		//¼ÆËãI1&I2
+	} while (/*I1&I2µÄÅÐ¶Ï*/);
 }
 
 static bool Purification_Init()
@@ -276,12 +280,139 @@ static bool Purification_Init()
 	j = 0;
 	p_j = xr;
 
+	//I1&I2
+
 	return true;
 }
 
-static Matrix_typedef u(Matrix_typedef p_j0)
+static bool u(Matrix_typedef p_j0, Matrix_typedef A_p, Matrix_typedef* p_j1)
 {
-	//
+	Matrix_typedef Matrix_temp;
+
+	p_j_2_X_p(p_j0);
+
+	if (!Project_MatrixMultiplication(X_p, X_p, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 1 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(X_p, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 2 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(X_p, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 3 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(A_p, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 4 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, Project_MatrixTransposition(A_p), &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 5 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Generalized_Inverse_matrix(Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 6 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Project_MatrixTransposition(A_p), Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 7 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(X_p, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 7 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(X_p, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 8 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, A_p, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 9 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, X_p, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 9 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, X_p, &Matrix_temp))
+	{
+		std::cout << "u¼ÆËã 10 ´íÎó£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	Matrix_Row p_j1_row_temp(1, 0);
+	Matrix_typedef p_j1_temp(p_j0.size(), p_j1_row_temp);
+
+	for (size_t i = 0; i < p_j1_temp.size(); i++)
+	{
+		(p_j1_temp[0])[i] = (Matrix_temp[i])[i];
+	}
+
+	*p_j1 = p_j1_temp;
+
+	return true;
+}
+
+static void p_j_2_X_p(Matrix_typedef p_j0)
+{
+	Matrix_Row X_p_row_temp(p_j0.size(), 0);
+	Matrix_typedef Matrix_temp(p_j0.size(), X_p_row_temp);
+
+	X_p = Matrix_temp;
+	for (size_t i = 0; i < p_j0.size(); i++)
+	{
+		(X_p[i])[i] = (p_j0[0])[i];
+	}
+}
+
+static bool Generalized_Inverse_matrix(Matrix_typedef matrix_temp, Matrix_typedef* matrix_result)
+{
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(matrix_temp, Project_MatrixTransposition(matrix_temp), &Matrix_temp))
+	{
+		std::cout << "¹ãÒåÄæ¾ØÕóÇó½â 1 ´íÎó£¡£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixInversion(Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "¹ãÒåÄæ¾ØÕóÇó½â 2 ´íÎó£¡£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Project_MatrixTransposition(matrix_temp), Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "¹ãÒåÄæ¾ØÕóÇó½â 3 ´íÎó£¡£¡£¡£¡" << std::endl;
+		return false;
+	}
+
+	*matrix_result = Matrix_temp;
+
+	return true;
 }
 
 //¸¨Öúº¯Êý
