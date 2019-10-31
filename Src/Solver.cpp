@@ -150,6 +150,7 @@ static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Ma
 
 	while (!AffineScale_Method_OptimalityTest(A_AS, c_AS, b_AS))
 	{
+		#ifndef LogBarrier_Function
 		if (!AffineScale_Method_d_yk())
 		{
 			std::cout << "原仿射尺度法d_yk计算错误！！！！" << std::endl;
@@ -167,6 +168,27 @@ static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Ma
 			std::cout << "步长计算错误！！！！" << std::endl;
 			return false;
 		}
+		#endif
+
+		#ifdef LogBarrier_Function
+		if (!AffineScale_Method_d_Muk())
+		{
+			std::cout << "原仿射尺度法d_yk计算错误！！！！" << std::endl;
+			return false;
+	}
+
+		if (AffineScale_Method_d_Muk_check())
+		{
+			std::cout << "原问题是无界的！！！！" << std::endl;
+			return false;
+		}
+
+		if (!AffineScale_Method_Alpha_k())
+		{
+			std::cout << "步长计算错误！！！！" << std::endl;
+			return false;
+		}
+		#endif
 
 		if (!AffineScale_Method_SetConfig())
 		{
@@ -237,6 +259,7 @@ static bool AffineScale_Method_SetConfig()
 {
 	Matrix_typedef Matrix_temp;
 
+	#ifndef LogBarrier_Function
 	if (!Project_MatrixMultiplication(X_k, d_yk, &Matrix_temp))
 	{
 		std::cout << "刷新设置，1 错误！！！！" << std::endl;
@@ -250,13 +273,33 @@ static bool AffineScale_Method_SetConfig()
 		std::cout << "刷新设置，2 错误！！！！" << std::endl;
 		return false;
 	}
+	#endif
 
+	#ifdef LogBarrier_Function
+	if (!Project_MatrixMultiplication(X_k, d_Muk, &Matrix_temp))
+	{
+		std::cout << "刷新设置，1 错误！！！！" << std::endl;
+		return false;
+}
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(Alpha_k, Matrix_temp);
+
+	if (!Project_MatrixPlusMatrix(x_k, Matrix_temp, &x_k))
+	{
+		std::cout << "刷新设置，2 错误！！！！" << std::endl;
+		return false;
+	}
+	#endif
+
+	k++;
 	return true;
 }
 
 //纯化函数
 static bool AffineScale_Method_Purification(Matrix_typedef A_p)
 {
+	std::cout << "开始纯化！！！！" << std::endl;
+
 	if (!Purification_Init())
 	{
 		std::cout << "纯化初始化错误！！！！" << std::endl;
@@ -270,8 +313,8 @@ static bool AffineScale_Method_Purification(Matrix_typedef A_p)
 			std::cout << "循环至 j = " << j << " ，u计算错误！！！" << std::endl;
 			return false;
 		}
-		//计算I1&I2
-	} while (/*I1&I2的判断*/);
+		Purification_I1I2Calculate();//计算I1&I2
+	} while (!Purification_Check()/*I1&I2的判断*/);
 }
 
 static bool Purification_Init()
@@ -280,9 +323,47 @@ static bool Purification_Init()
 	j = 0;
 	p_j = xr;
 
-	//I1&I2
+	return true;
+}
+
+static bool Purification_I1I2Calculate()
+{
+	Matrix_Row i(1,0);
+
+	i[0] = 0;
+
+	for (auto row_temp : p_j)
+	{
+		if (row_temp[0] < Epsilon)
+		{
+			I2.push_back(i);
+		}
+		else if (row_temp[0] > (1 - Epsilon))
+		{
+			I1.push_back(i);
+		}
+
+		i[0] = i[0] + 1;
+	}
 
 	return true;
+}
+
+static bool Purification_Check()
+{
+	if ((I1.size() + I2.size()) == p_j.size())
+	{
+		I1.clear();
+		I2.clear();
+		return true;
+	}
+	else
+	{
+		I1.clear();
+		I2.clear();
+		std::cout << "纯化成功！！！" << std::endl;
+		return false;
+	}
 }
 
 static bool u(Matrix_typedef p_j0, Matrix_typedef A_p, Matrix_typedef* p_j1)
@@ -563,6 +644,7 @@ static bool AffineScale_Method_e_t_X_k_r_k_check()
 	return false;
 }
 
+#ifndef LogBarrier_Function
 static bool AffineScale_Method_d_yk()
 {
 	Matrix_typedef Matrix_temp;
@@ -623,4 +705,22 @@ static bool AffineScale_Method_Alpha_k()
 	Alpha_k = Alpha_k_before;
 	return true;
 }
+#endif
+
+#ifdef LogBarrier_Function
+static bool AffineScale_Method_d_Muk()
+{
+	;
+}
+
+static bool AffineScale_Method_d_Muk_check()
+{
+	;
+}
+
+static bool AffineScale_Method_Alpha_k()
+{
+	;
+}
+#endif
 /*原仿射尺度求解*/
