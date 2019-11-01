@@ -20,7 +20,7 @@ Matrix_typedef c_M;	//大M的列向量c
 /*大M法求解相关变量*/
 
 /*求解原仿射尺度求解相关变量*/
-double k;				//迭代次数
+size_t k;				//迭代次数
 double Epsilon;			//一个近似为0的正数
 double Alpha;			//一个近似为1的数
 Matrix_typedef x_k;		//迭代用x列向量，也用于输入初始点
@@ -31,11 +31,18 @@ Matrix_typedef r_k;		//x_kd对应的约费用向量
 Matrix_typedef d_yk;	//转移方向
 Matrix_typedef d_xk;	//转移方向
 double Alpha_k;			//步长
+Matrix_typedef e;		//元素全为1的列向量，维度与当前问题的列向量x相同
+Matrix_typedef I;		//单位阵
+//纯化函数相关变量
+size_t j;			//迭代次数
+Matrix_typedef p_j;	//纯化向量
+Matrix_typedef I1;	//集合1
+Matrix_typedef I2;	//集合2
+Matrix_typedef X_p;	//p_j对应的对角阵
 /*求解原仿射尺度求解相关变量*/
 
 /*对中力计算相关变量*/
 double Mu;				//一个大于零的标量μ
-Matrix_typedef e;		//元素全为1的列向量，维度与当前问题的列向量x相同
 Matrix_typedef d_Muk;	//转移方向
 /*对中力计算相关变量*/
 
