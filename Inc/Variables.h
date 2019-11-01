@@ -22,7 +22,7 @@ extern Matrix_typedef c_M;	//大M的列向量c
 /*大M法求解相关变量*/
 
 /*求解原仿射尺度求解相关变量*/
-extern double k;				//迭代次数
+extern size_t k;				//迭代次数
 extern double Epsilon;			//一个近似为0的正数
 extern double Alpha;			//一个近似为1的数
 extern Matrix_typedef x_k;		//迭代用x列向量，也用于输入初始点
@@ -34,6 +34,7 @@ extern Matrix_typedef d_yk;		//转移方向
 extern Matrix_typedef d_xk;		//转移方向
 extern double Alpha_k;			//步长
 extern Matrix_typedef e;		//元素全为1的列向量，维度与当前问题的列向量x相同
+extern Matrix_typedef I;		//单位阵
 //纯化函数相关变量
 extern size_t j;			//迭代次数
 extern Matrix_typedef p_j;	//纯化向量
