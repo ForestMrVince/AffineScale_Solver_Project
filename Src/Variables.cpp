@@ -32,6 +32,7 @@ Matrix_typedef d_yk;	//转移方向
 Matrix_typedef d_xk;	//转移方向
 double Alpha_k;			//步长
 Matrix_typedef e;		//元素全为1的列向量，维度与当前问题的列向量x相同
+Matrix_typedef I;		//单位阵
 //纯化函数相关变量
 size_t j;			//迭代次数
 Matrix_typedef p_j;	//纯化向量
