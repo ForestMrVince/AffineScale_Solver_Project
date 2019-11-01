@@ -15,6 +15,7 @@ static void x_init();			//≥ı ºªØ◊‘±‰¡ø¡–œÚ¡øx
 
 /*¥ÛM∂Œ∑®«ÛΩ‚∫Ø ˝*/
 static bool BigM_Method_main();	//¥ÛM∑®÷˜∫Ø ˝
+static bool BigM_Method_Init();	//¥ÛM∑®≥ı ºªØ
 /*¥ÛM∑®«ÛΩ‚∫Ø ˝*/
 
 /*‘≠∑¬…‰≥ﬂ∂»«ÛΩ‚*/
@@ -32,6 +33,8 @@ static bool AffineScale_Method_d_yk_check();																			//ºÏ≤Èd_yk «∑Ò∂º¥
 static bool AffineScale_Method_Alpha_k();																				//º∆À„≤Ω≥§
 #endif
 #ifdef LogBarrier_Function
+static bool AffineScale_Method_d_yk();																					//º∆À„d_yk
+static bool AffineScale_Method_P_k(Matrix_typedef A_AS);																//º∆À„P_k
 static bool AffineScale_Method_d_Muk();																					//º∆À„d_Muk
 static bool AffineScale_Method_d_Muk_check();																			//ºÏ≤Èd_yk «∑Ò∂º¥Û”⁄0
 static bool AffineScale_Method_Alpha_k();																				//º∆À„≤Ω≥§
