@@ -132,6 +132,57 @@ static void x_init()
 //主函数
 static bool BigM_Method_main()
 {
+	Matrix_Row x_0_row_temp(1, 1);
+	Matrix_typedef x_0_temp(x.size()+1, x_0_row_temp);
+
+	if (!BigM_Method_Init())
+	{
+		std::cout << "大M法初始化错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!AffineScale_Method_main(A_M, c_M, b, x_0_temp))
+	{
+		std::cout << "大M法求解失败！！！！" << std::endl;
+		return false;
+	}
+
+	std::cout << "大M法求解成功！！！！" << std::endl;
+	return true;
+}
+
+//初始化
+static bool BigM_Method_Init()
+{
+	std::cin >> M;
+
+	Matrix_Row e_row_temp(1, 1);
+	Matrix_typedef Matrix_e_temp(x.size(), e_row_temp);
+
+	e = Matrix_e_temp;
+
+	Matrix_Row Row_temp(1, M);
+	c_M = c;
+	c_M.push_back(Row_temp);
+
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(A, e, &Matrix_temp))
+	{
+		std::cout << "大M法初始化 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(-1, Matrix_temp);
+
+	if (!Project_MatrixPlusMatrix(b, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "大M法初始化 2 错误！！！！" << std::endl;
+		return false;
+	}
+	A_M = A;
+	A_M.push_back(Matrix_temp[0]);
+
 	return true;
 }
 /*大M法求解函数*/
@@ -171,11 +222,23 @@ static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Ma
 		#endif
 
 		#ifdef LogBarrier_Function
-		if (!AffineScale_Method_d_Muk())
+		if (!AffineScale_Method_d_yk())
 		{
 			std::cout << "原仿射尺度法d_yk计算错误！！！！" << std::endl;
 			return false;
-	}
+		}
+
+		if (!AffineScale_Method_P_k(A_AS))
+		{
+			std::cout << "原仿射尺度法P_k计算错误！！！！" << std::endl;
+			return false;
+		}
+
+		if (!AffineScale_Method_d_Muk())
+		{
+			std::cout << "原仿射尺度法d_Muk计算错误！！！！" << std::endl;
+			return false;
+		}
 
 		if (AffineScale_Method_d_Muk_check())
 		{
@@ -215,8 +278,23 @@ static bool AffineScale_Method_Init(Matrix_typedef x_0)
 	Alpha = 0.99;
 	x_k = x_0;
 
-	Matrix_Row X_k_row_temp(1, 1);
-	Matrix_typedef Matrix_temp(x_k.size(), X_k_row_temp);
+	#ifdef LogBarrier_Function
+	std::cin >> Mu;
+	#endif
+
+	I.clear();
+
+	Matrix_Row I_row_temp(x_k.size(), 0);
+
+	for (size_t i = 0; i < x_k.size(); i++)
+	{
+		I_row_temp[i] = 1;
+		I.push_back(I_row_temp);
+		I_row_temp[i] = 0;
+	}
+
+	Matrix_Row e_row_temp(1, 1);
+	Matrix_typedef Matrix_temp(x_k.size(), e_row_temp);
 
 	e = Matrix_temp;
 
@@ -355,14 +433,15 @@ static bool Purification_Check()
 	{
 		I1.clear();
 		I2.clear();
-		return true;
+		return false;
 	}
 	else
 	{
 		I1.clear();
 		I2.clear();
+		xr = p_j;
 		std::cout << "纯化成功！！！" << std::endl;
-		return false;
+		return true;
 	}
 }
 
@@ -708,19 +787,164 @@ static bool AffineScale_Method_Alpha_k()
 #endif
 
 #ifdef LogBarrier_Function
+static bool AffineScale_Method_d_yk()
+{
+	Matrix_typedef Matrix_temp;
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(-1, X_k);
+
+	if (!Project_MatrixMultiplication(Matrix_temp, r_k, &d_yk))
+	{
+		std::cout << "最优性判断，d_yk 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+static bool AffineScale_Method_P_k(Matrix_typedef A_AS)
+{
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(X_k, X_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(A_AS, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 2 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, Project_MatrixTransposition(A_AS), &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 3 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixInversion(Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 4 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Project_MatrixTransposition(A_AS), Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 5 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(X_k, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 6 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, A_AS, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 7 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, X_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 6 错误！！！！" << std::endl;
+		return false;
+	}
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(-1, Matrix_temp);
+
+	if (!Project_MatrixPlusMatrix(I, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，P_k 7 错误！！！！" << std::endl;
+		return false;
+	}
+
+	P_k = Matrix_temp;
+
+	return true;
+}
+
 static bool AffineScale_Method_d_Muk()
 {
-	;
+	if (!Project_MatrixMultiplication(X_k, d_yk, &d_xk))
+	{
+		std::cout << "最优性判断，d_xk 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	Matrix_typedef Matrix_temp;
+
+	if (!Project_MatrixMultiplication(X_k, P_k, &Matrix_temp))
+	{
+		std::cout << "最优性判断，d_Muk 1 错误！！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, e, &Matrix_temp))
+	{
+		std::cout << "最优性判断，d_Muk 2 错误！！！！" << std::endl;
+		return false;
+	}
+
+	Matrix_temp = Project_MatrixMultipliedByNumber(Mu, Matrix_temp);
+
+	if (!Project_MatrixPlusMatrix(d_xk, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "最优性判断，d_Muk 2 错误！！！！" << std::endl;
+		return false;
+	}
+
+	d_Muk = Matrix_temp;
+	return true;
 }
 
 static bool AffineScale_Method_d_Muk_check()
 {
-	;
+	for (auto row_temp : d_Muk)
+	{
+		for (auto temp : row_temp)
+		{
+			if (temp <= 0)
+			{
+				return false;
+			}
+		}
+	}
+
+	std::cout << "最优性判断，d_Muk 全大于零！！！！" << std::endl;
+	return true;
 }
 
 static bool AffineScale_Method_Alpha_k()
 {
-	;
+	double Alpha_k_before = 0, Alpha_k_now = 0;
+	bool i = false;
+
+	for (auto row_temp : d_Muk)
+	{
+		for (auto temp : row_temp)
+		{
+			Alpha_k_now = Alpha / (0 - temp);
+			if (!i)
+			{
+				Alpha_k_before = Alpha_k_now;
+				i = true;
+			}
+			else
+			{
+				if (Alpha_k_now > Alpha_k_before)
+				{
+					Alpha_k_before = Alpha_k_now;
+				}
+			}
+		}
+	}
+
+	Alpha_k = Alpha_k_before;
+	return true;
 }
 #endif
 /*原仿射尺度求解*/
