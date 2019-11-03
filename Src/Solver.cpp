@@ -195,8 +195,7 @@ static bool BigM_Method_Init()
 
 /*原仿射尺度求解*/
 //主函数
-//static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)
-bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)//test
+static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)
 {
 	std::cout << "原仿射尺度求解开始..." << std::endl;
 	
@@ -258,14 +257,6 @@ bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_ty
 			std::cout << "步长计算错误！！！！" << std::endl;
 			return false;
 		}
-
-		std::cout << "d_yk：" << std::endl;					//test
-		Project_ShowAMatrix(&d_yk);							//test
-		std::cout << "P_k：" << std::endl;					//test
-		Project_ShowAMatrix(&P_k);							//test
-		std::cout << "d_Muk：" << std::endl;					//test
-		Project_ShowAMatrix(&d_Muk);						//test
-		std::cout << "Alpha_k：" << Alpha_k << std::endl;	//test
 		#endif
 
 		if (!AffineScale_Method_SetConfig())
@@ -342,26 +333,8 @@ static bool AffineScale_Method_OptimalityTest(Matrix_typedef A_AS, Matrix_typede
 		xr = x_k;
 		cr = c_AS;
 
-		std::cout << "A_AS：" << std::endl;	//test
-		Project_ShowAMatrix(&A_AS);			//test
-		std::cout << "X_k：" << std::endl;	//test
-		Project_ShowAMatrix(&X_k);			//test
-		std::cout << "p_k：" << std::endl;	//test
-		Project_ShowAMatrix(&p_k);			//test
-		std::cout << "r_k：" << std::endl;	//test
-		Project_ShowAMatrix(&r_k);			//test
-
 		return true;
 	}
-
-	std::cout << "A_AS：" << std::endl;	//test
-	Project_ShowAMatrix(&A_AS);			//test
-	std::cout << "X_k：" << std::endl;	//test
-	Project_ShowAMatrix(&X_k);			//test
-	std::cout << "p_k：" << std::endl;	//test
-	Project_ShowAMatrix(&p_k);			//test
-	std::cout << "r_k：" << std::endl;	//test
-	Project_ShowAMatrix(&r_k);			//test
 
 	std::cout << "循环至 k = " << k << "，当前解非最优！！！！" << std::endl;
 	std::cout << "继续循环！！！！" << std::endl;
@@ -415,8 +388,6 @@ static bool AffineScale_Method_Purification(Matrix_typedef A_p)
 
 	do
 	{
-		std::cout << "p_j：" << std::endl;	//test
-		Project_ShowAMatrix(&p_j);			//test
 		
 		j = j + 1;
 		if (!u(p_j, A_p, &p_j))
@@ -424,9 +395,6 @@ static bool AffineScale_Method_Purification(Matrix_typedef A_p)
 			std::cout << "循环至 j = " << j << " ，u计算错误！！！" << std::endl;
 			return false;
 		}
-
-		std::cout << "p_j+1：" << std::endl;	//test
-		Project_ShowAMatrix(&p_j);			//test
 
 		Purification_I1I2Calculate();//计算I1&I2
 	} while (!Purification_Check()/*I1&I2的判断*/);
