@@ -154,7 +154,9 @@ static bool BigM_Method_main()
 //初始化
 static bool BigM_Method_Init()
 {
+	std::cout << "请输入M：" << std::endl;
 	std::cin >> M;
+	std::cout << "M值已录入，计算继续！！！" << std::endl;
 
 	Matrix_Row e_row_temp(1, 1);
 	Matrix_typedef Matrix_e_temp(x.size(), e_row_temp);
@@ -180,8 +182,12 @@ static bool BigM_Method_Init()
 		std::cout << "大M法初始化 2 错误！！！！" << std::endl;
 		return false;
 	}
-	A_M = A;
-	A_M.push_back(Matrix_temp[0]);
+
+	if (!Project_MatrixMerging(A, Matrix_temp, &A_M))
+	{
+		std::cout << "大M法初始化 3 错误！！！！" << std::endl;
+		return false;
+	}
 
 	return true;
 }
@@ -189,7 +195,8 @@ static bool BigM_Method_Init()
 
 /*原仿射尺度求解*/
 //主函数
-static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)
+//static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)
+bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0)//test
 {
 	std::cout << "原仿射尺度求解开始..." << std::endl;
 	
@@ -251,6 +258,14 @@ static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Ma
 			std::cout << "步长计算错误！！！！" << std::endl;
 			return false;
 		}
+
+		std::cout << "d_yk：" << std::endl;					//test
+		Project_ShowAMatrix(&d_yk);							//test
+		std::cout << "P_k：" << std::endl;					//test
+		Project_ShowAMatrix(&P_k);							//test
+		std::cout << "d_Muk：" << std::endl;					//test
+		Project_ShowAMatrix(&d_Muk);						//test
+		std::cout << "Alpha_k：" << Alpha_k << std::endl;	//test
 		#endif
 
 		if (!AffineScale_Method_SetConfig())
@@ -274,12 +289,14 @@ static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Ma
 static bool AffineScale_Method_Init(Matrix_typedef x_0)
 {
 	k = 0;
-	Epsilon = 0.01;
+	Epsilon = 0.00001;
 	Alpha = 0.99;
 	x_k = x_0;
 
 	#ifdef LogBarrier_Function
+	std::cout << "请输入μ：" << std::endl;
 	std::cin >> Mu;
+	std::cout << "μ值已录入，计算继续！！！" << std::endl;
 	#endif
 
 	I.clear();
@@ -325,8 +342,26 @@ static bool AffineScale_Method_OptimalityTest(Matrix_typedef A_AS, Matrix_typede
 		xr = x_k;
 		cr = c_AS;
 
+		std::cout << "A_AS：" << std::endl;	//test
+		Project_ShowAMatrix(&A_AS);			//test
+		std::cout << "X_k：" << std::endl;	//test
+		Project_ShowAMatrix(&X_k);			//test
+		std::cout << "p_k：" << std::endl;	//test
+		Project_ShowAMatrix(&p_k);			//test
+		std::cout << "r_k：" << std::endl;	//test
+		Project_ShowAMatrix(&r_k);			//test
+
 		return true;
 	}
+
+	std::cout << "A_AS：" << std::endl;	//test
+	Project_ShowAMatrix(&A_AS);			//test
+	std::cout << "X_k：" << std::endl;	//test
+	Project_ShowAMatrix(&X_k);			//test
+	std::cout << "p_k：" << std::endl;	//test
+	Project_ShowAMatrix(&p_k);			//test
+	std::cout << "r_k：" << std::endl;	//test
+	Project_ShowAMatrix(&r_k);			//test
 
 	std::cout << "循环至 k = " << k << "，当前解非最优！！！！" << std::endl;
 	std::cout << "继续循环！！！！" << std::endl;
@@ -354,13 +389,8 @@ static bool AffineScale_Method_SetConfig()
 	#endif
 
 	#ifdef LogBarrier_Function
-	if (!Project_MatrixMultiplication(X_k, d_Muk, &Matrix_temp))
-	{
-		std::cout << "刷新设置，1 错误！！！！" << std::endl;
-		return false;
-}
 
-	Matrix_temp = Project_MatrixMultipliedByNumber(Alpha_k, Matrix_temp);
+	Matrix_temp = Project_MatrixMultipliedByNumber(Alpha_k, d_Muk);
 
 	if (!Project_MatrixPlusMatrix(x_k, Matrix_temp, &x_k))
 	{
@@ -385,19 +415,28 @@ static bool AffineScale_Method_Purification(Matrix_typedef A_p)
 
 	do
 	{
+		std::cout << "p_j：" << std::endl;	//test
+		Project_ShowAMatrix(&p_j);			//test
+		
 		j = j + 1;
 		if (!u(p_j, A_p, &p_j))
 		{
 			std::cout << "循环至 j = " << j << " ，u计算错误！！！" << std::endl;
 			return false;
 		}
+
+		std::cout << "p_j+1：" << std::endl;	//test
+		Project_ShowAMatrix(&p_j);			//test
+
 		Purification_I1I2Calculate();//计算I1&I2
 	} while (!Purification_Check()/*I1&I2的判断*/);
+
+	return true;
 }
 
 static bool Purification_Init()
 {
-	Epsilon = 0.01;
+	Epsilon = 0.00001;
 	j = 0;
 	p_j = xr;
 
@@ -429,7 +468,7 @@ static bool Purification_I1I2Calculate()
 
 static bool Purification_Check()
 {
-	if ((I1.size() + I2.size()) == p_j.size())
+	if ((I1.size() + I2.size()) != p_j.size())
 	{
 		I1.clear();
 		I2.clear();
@@ -437,9 +476,18 @@ static bool Purification_Check()
 	}
 	else
 	{
+		for (auto row_temp : I2)
+		{
+			for (auto temp : row_temp)
+			{
+				std::cout << temp << std::endl;
+				(xr[temp])[0] = 0;
+			}
+		}
+
 		I1.clear();
 		I2.clear();
-		xr = p_j;
+
 		std::cout << "纯化成功！！！" << std::endl;
 		return true;
 	}
@@ -495,31 +543,31 @@ static bool u(Matrix_typedef p_j0, Matrix_typedef A_p, Matrix_typedef* p_j1)
 
 	if (!Project_MatrixMultiplication(X_p, Matrix_temp, &Matrix_temp))
 	{
-		std::cout << "u计算 7 错误！！！" << std::endl;
+		std::cout << "u计算 8 错误！！！" << std::endl;
 		return false;
 	}
 
 	if (!Project_MatrixMultiplication(X_p, Matrix_temp, &Matrix_temp))
 	{
-		std::cout << "u计算 8 错误！！！" << std::endl;
+		std::cout << "u计算 9 错误！！！" << std::endl;
 		return false;
 	}
 
 	if (!Project_MatrixMultiplication(Matrix_temp, A_p, &Matrix_temp))
 	{
-		std::cout << "u计算 9 错误！！！" << std::endl;
-		return false;
-	}
-
-	if (!Project_MatrixMultiplication(Matrix_temp, X_p, &Matrix_temp))
-	{
-		std::cout << "u计算 9 错误！！！" << std::endl;
-		return false;
-	}
-
-	if (!Project_MatrixMultiplication(Matrix_temp, X_p, &Matrix_temp))
-	{
 		std::cout << "u计算 10 错误！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, X_p, &Matrix_temp))
+	{
+		std::cout << "u计算 11 错误！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(Matrix_temp, X_p, &Matrix_temp))
+	{
+		std::cout << "u计算 12 错误！！！" << std::endl;
 		return false;
 	}
 
@@ -528,7 +576,7 @@ static bool u(Matrix_typedef p_j0, Matrix_typedef A_p, Matrix_typedef* p_j1)
 
 	for (size_t i = 0; i < p_j1_temp.size(); i++)
 	{
-		(p_j1_temp[0])[i] = (Matrix_temp[i])[i];
+		(p_j1_temp[i])[0] = (Matrix_temp[i])[i];
 	}
 
 	*p_j1 = p_j1_temp;
@@ -544,7 +592,7 @@ static void p_j_2_X_p(Matrix_typedef p_j0)
 	X_p = Matrix_temp;
 	for (size_t i = 0; i < p_j0.size(); i++)
 	{
-		(X_p[i])[i] = (p_j0[0])[i];
+		(X_p[i])[i] = (p_j0[i])[0];
 	}
 }
 
@@ -584,7 +632,7 @@ static void AffineScale_Method_xk2Xk()
 	X_k = Matrix_temp;
 	for (size_t i = 0; i < x_k.size(); i++)
 	{
-		(X_k[i])[i] = (x_k[0])[i];
+		(X_k[i])[i] = (x_k[i])[0];
 	}
 }
 
@@ -634,7 +682,7 @@ static bool AffineScale_Method_p_k(Matrix_typedef A_AS, Matrix_typedef c_AS)
 		return false;
 	}
 
-	if (!Project_MatrixMultiplication(Matrix_temp, c, &p_k))
+	if (!Project_MatrixMultiplication(Matrix_temp, c_AS, &p_k))
 	{
 		std::cout << "最优性判断，p_k 8 错误！！！！" << std::endl;
 		return false;
@@ -766,14 +814,14 @@ static bool AffineScale_Method_Alpha_k()
 		for (auto temp : row_temp)
 		{
 			Alpha_k_now = Alpha / (0 - temp);
-			if (!i)
+			if ((!i) && (Alpha_k_now > 0))
 			{
 				Alpha_k_before = Alpha_k_now;
 				i = true;
 			}
 			else
 			{
-				if (Alpha_k_now > Alpha_k_before)
+				if ((Alpha_k_now < Alpha_k_before) && (Alpha_k_now > 0))
 				{
 					Alpha_k_before = Alpha_k_now;
 				}
@@ -920,22 +968,37 @@ static bool AffineScale_Method_d_Muk_check()
 
 static bool AffineScale_Method_Alpha_k()
 {
+	Matrix_typedef Matrix_temp, X_I_temp;
+
+	Matrix_temp = d_Muk;
+	if (!Project_MatrixInversion(X_k, &X_I_temp))
+	{
+		std::cout << "Alpha_k计算，1 错误！！！" << std::endl;
+		return false;
+	}
+
+	if (!Project_MatrixMultiplication(X_I_temp, Matrix_temp, &Matrix_temp))
+	{
+		std::cout << "Alpha_k计算，2 错误！！！" << std::endl;
+		return false;
+	}
+
 	double Alpha_k_before = 0, Alpha_k_now = 0;
 	bool i = false;
 
-	for (auto row_temp : d_Muk)
+	for (auto row_temp : Matrix_temp)
 	{
 		for (auto temp : row_temp)
 		{
 			Alpha_k_now = Alpha / (0 - temp);
-			if (!i)
+			if ((!i) && (Alpha_k_now > 0))
 			{
 				Alpha_k_before = Alpha_k_now;
 				i = true;
 			}
 			else
 			{
-				if (Alpha_k_now > Alpha_k_before)
+				if ((Alpha_k_now < Alpha_k_before) && (Alpha_k_now > 0))
 				{
 					Alpha_k_before = Alpha_k_now;
 				}
