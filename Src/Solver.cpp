@@ -226,6 +226,12 @@ bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_ty
 			std::cout << "²½³¤¼ÆËã´íÎó£¡£¡£¡£¡" << std::endl;
 			return false;
 		}
+
+		std::cout << "d_yk£º" << std::endl;					//test
+		Project_ShowAMatrix(&d_yk);							//test
+		std::cout << "d_Muk£º" << std::endl;					//test
+		Project_ShowAMatrix(&d_Muk);						//test
+		std::cout << "Alpha_k£º" << Alpha_k << std::endl;	//test
 		#endif
 
 		#ifdef LogBarrier_Function
@@ -261,8 +267,6 @@ bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_ty
 
 		std::cout << "d_yk£º" << std::endl;					//test
 		Project_ShowAMatrix(&d_yk);							//test
-		std::cout << "P_k£º" << std::endl;					//test
-		Project_ShowAMatrix(&P_k);							//test
 		std::cout << "d_Muk£º" << std::endl;					//test
 		Project_ShowAMatrix(&d_Muk);						//test
 		std::cout << "Alpha_k£º" << Alpha_k << std::endl;	//test
