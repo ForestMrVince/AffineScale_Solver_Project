@@ -19,8 +19,7 @@ static bool BigM_Method_Init();	//大M法初始化
 /*大M法求解函数*/
 
 /*原仿射尺度求解*/
-bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0);	//原仿射尺度法主函数				※test
-//static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0);	//原仿射尺度法主函数
+static bool AffineScale_Method_main(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS, Matrix_typedef x_0);	//原仿射尺度法主函数
 static bool AffineScale_Method_Init(Matrix_typedef x_0);																//初始化
 static bool AffineScale_Method_OptimalityTest(Matrix_typedef A_AS, Matrix_typedef c_AS, Matrix_typedef b_AS);			//最优性测试
 static void AffineScale_Method_xk2Xk();																					//x_k转换为X_k
