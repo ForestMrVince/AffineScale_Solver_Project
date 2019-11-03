@@ -151,6 +151,59 @@ int main()
 	Project_ShowAMatrix(&x_s);
 	std::cout << std::endl;*/
 
+	/*Matrix_Row Row1{ 1,-1,1,0 };//test
+	A.push_back(Row1);
+	Row1 = { 0,1,0,1 };
+	A.push_back(Row1);
+	Project_ShowAMatrix(&A);
+
+	Matrix_Row Row2(1, 15);
+	b.push_back(Row2);
+	Row2[0] = 15;
+	b.push_back(Row2);
+	Project_ShowAMatrix(&b);
+
+	Matrix_Row Row3(1, -2);
+	c.push_back(Row3);
+	Row3[0] = 1;
+	c.push_back(Row3);
+	Row3[0] = 0;
+	c.push_back(Row3);
+	Row3[0] = 0;
+	c.push_back(Row3);
+	Project_ShowAMatrix(&c);
+
+	Matrix_Row Row(1, 10);
+	x.push_back(Row);
+	Row[0] = 2;
+	x.push_back(Row);
+	Row[0] = 7;
+	x.push_back(Row);
+	Row[0] = 13;
+	x.push_back(Row);
+	Project_ShowAMatrix(&x);
+
+	if (AffineScale_Method_main(A,c,b,x))
+	{
+		std::cout << "求解成功！！！" << std::endl;
+
+		Matrix_typedef cr_xr_Mult_Result;
+		if (!Project_MatrixMultiplication(Project_MatrixTransposition(cr), xr, &cr_xr_Mult_Result))//检验
+		{
+			std::cout << "相乘失败！！！" << std::endl;
+			return false;
+		}
+		std::cout << "最优解：" << std::endl;
+		Project_ShowAMatrix(&cr_xr_Mult_Result);
+		std::cout << "优解的x：" << std::endl;
+		Project_ShowAMatrix(&xr);
+		std::cout << std::endl;
+	}
+	else
+	{
+		std::cout << "求解失败！！！" << std::endl;
+	}*/
+
 	if (Project_solver_main())
 	{
 		std::cout << "求解成功！！！" << std::endl;
