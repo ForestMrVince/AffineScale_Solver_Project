@@ -448,13 +448,17 @@ static bool Purification_Check()
 		{
 			for (auto temp : row_temp)
 			{
-				std::cout << temp << std::endl;
 				(xr[temp])[0] = 0;
 			}
 		}
 
 		I1.clear();
 		I2.clear();
+
+        auto iterator = xr.end();
+        xr.erase(iterator - 1);
+        iterator = cr.end();
+        cr.erase(iterator - 1);
 
 		std::cout << "´¿»¯³É¹¦£¡£¡£¡" << std::endl;
 		return true;
